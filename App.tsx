@@ -13,12 +13,18 @@ const App: React.FC = () => {
   const [examState, setExamState] = useState<{config: ExamConfig, questions: Question[]} | null>(null);
   const [finalResult, setFinalResult] = useState<ExamResult | null>(null);
   
+  
   // Login states
   const [loginIdgv, setLoginIdgv] = useState('');
   const [loginSbd, setLoginSbd] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+  const [loginPass, setLoginPass] = useState('');
 
   const handleTeacherLogin = async () => {
+    if (loginPass !== `a${loginIdgv}@`) {
+  alert('Sai mật khẩu');
+  return;
+}
     if (!loginIdgv) return;
     setLoginLoading(true);
     const gv = await verifyTeacher(loginIdgv);
@@ -129,6 +135,13 @@ const App: React.FC = () => {
                     value={loginIdgv}
                     onChange={(e) => setLoginIdgv(e.target.value)}
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                   <input 
+                  type="password"
+                  placeholder="Nhập mật khẩu"
+                  value={loginPass}
+                  onChange={(e) => setLoginPass(e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                   <button 
                     onClick={handleTeacherLogin}
