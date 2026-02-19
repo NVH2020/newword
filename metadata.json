@@ -1,0 +1,5 @@
+{
+  "name": "Hệ Thống Thi Online LaTeX Pro",
+  "description": "Ứng dụng thi online chuyên nghiệp hỗ trợ soạn thảo LaTeX, trộn đề 3 phần, quản lý qua Google Sheets và chống gian lận chuyển tab.",
+  "requestFramePermissions": []
+}
