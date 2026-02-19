@@ -29,23 +29,21 @@ export async function parseExamFile(file: File, examCode: string): Promise<Quest
     if (!text) return;
 
     // =========================
-    // Detect Section
-    // =========================
-    if (/Phần I/i.test(text)) {
-      currentType = QuestionType.MCQ;
-      return;
-    }
+    // Detect Section (robust)
+if (/Phần\s*I\b/i.test(text)) {
+  currentType = QuestionType.MCQ;
+  return;
+}
 
-    if (/Phần II/i.test(text)) {
-      currentType = QuestionType.TF;
-      return;
-    }
+if (/Phần\s*II\b/i.test(text)) {
+  currentType = QuestionType.TF;
+  return;
+}
 
-    if (/Phần III/i.test(text)) {
-      currentType = QuestionType.SA;
-      return;
-    }
-
+if (/Phần\s*III\b/i.test(text)) {
+  currentType = QuestionType.SA;
+  return;
+}
     // =========================
     // Detect New Question
     // =========================
