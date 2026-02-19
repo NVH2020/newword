@@ -2,7 +2,7 @@
 import { TeacherInfo, StudentInfo, ExamConfig, Question, ExamResult } from '../types';
 
 // THAY URL NÀY BẰNG URL WEB APP CỦA BẠN SAU KHI DEPLOY GOOGLE APPS SCRIPT
-const ADMIN_SHEET_URL = "https://script.google.com/macros/s/AKfycbz_REAL_URL_HERE/exec"; 
+const ADMIN_SHEET_URL = "https://script.google.com/macros/s/AKfycbyeRfOehuGo0NegH5HQvhep1lyHPuKMEErn4QMW_ycmyDw0mjAzUvlM9tDejcOnIg6q/exec"; 
 
 /**
  * Hàm gọi Google Apps Script thông qua POST request.
