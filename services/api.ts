@@ -1,67 +1,63 @@
 
 import { TeacherInfo, StudentInfo, ExamConfig, Question, ExamResult } from '../types';
 
-const ADMIN_SHEET_URL = "https://script.google.com/macros/s/AKfycbyfE9_35N_Y_L0K4P3q9v8T0o3vV-K1B1C/exec"; // Mock URL
+// THAY URL NÀY BẰNG URL WEB APP CỦA BẠN SAU KHI DEPLOY GOOGLE APPS SCRIPT
+const ADMIN_SHEET_URL = "https://script.google.com/macros/s/AKfycbz_REAL_URL_HERE/exec"; 
 
 /**
- * Generic fetcher for Google Apps Script.
- * Assumes the Script returns JSON and handles CORS.
+ * Hàm gọi Google Apps Script thông qua POST request.
+ * GAS yêu cầu POST với content-type text/plain để tránh lỗi CORS Preflight.
  */
-async function callScript(url: string, payload: any) {
+async function callGAS(action: string, payload: any, url: string = ADMIN_SHEET_URL) {
   try {
     const response = await fetch(url, {
       method: 'POST',
-      mode: 'no-cors', // In real scenarios, Google Apps Script redirects might cause issues with 'cors'
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      mode: 'cors', // Sử dụng cors vì chúng ta muốn đọc kết quả trả về
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+      },
+      body: JSON.stringify({ action, payload })
     });
-    // Due to 'no-cors', we can't read the body in standard browser fetch if it's not handled by the server.
-    // Usually, we use JSONP or the developer sets up a CORS-friendly proxy.
-    // For this prototype, we'll simulate the response or assume 'cors' works if configured correctly.
-    return { success: true }; 
+    
+    if (!response.ok) throw new Error("Network response was not ok");
+    
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error("API Error:", error);
-    throw error;
+    return { success: false, message: "Lỗi kết nối server: " + error };
   }
 }
 
-// SIMULATED DB FOR PROTOTYPE PURPOSES (Since real Google Sheet URLs need active scripts)
-const MOCK_TEACHERS: TeacherInfo[] = [
-  { idNumber: "GV001", name: "Nguyễn Văn A", linkScript: "https://script.google.com/macros/s/teacher-a/exec", subject: "Toán" },
-  { idNumber: "GV002", name: "Trần Thị B", linkScript: "https://script.google.com/macros/s/teacher-b/exec", subject: "Lý" }
-];
-
 export async function verifyTeacher(idgv: string): Promise<TeacherInfo | null> {
-  // Real implementation: fetch from ADMIN_SHEET_URL?action=getTeachers
-  return MOCK_TEACHERS.find(t => t.idNumber === idgv) || null;
+  const res = await callGAS('verifyTeacher', { idgv });
+  return res.success ? res.data : null;
 }
 
 export async function verifyStudent(idgv: string, sbd: string, linkScript: string): Promise<StudentInfo | null> {
-  // Real implementation: fetch from linkScript?action=getStudents
-  // Simulation:
-  if (idgv === "GV001" && sbd === "HS001") {
-    return { sbd: "HS001", name: "Lê Văn C", class: "12A1", idgv: "GV001" };
-  }
-  return null;
+  // Ưu tiên dùng linkScript riêng của GV nếu có, không thì dùng Admin URL
+  const endpoint = linkScript || ADMIN_SHEET_URL;
+  const res = await callGAS('verifyStudent', { idgv, sbd }, endpoint);
+  return res.success ? res.data : null;
 }
 
 export async function saveExam(linkScript: string, config: ExamConfig, questions: Question[]) {
-  // POST to teacher's script
-  console.log("Saving exam to:", linkScript, { config, questions });
-  return { success: true };
+  const endpoint = linkScript || ADMIN_SHEET_URL;
+  return await callGAS('saveExam', { config, questions }, endpoint);
 }
 
 export async function getExamData(linkScript: string, examCode: string): Promise<{config: ExamConfig, questions: Question[]} | null> {
-  // GET from teacher's script
-  return null; // Implementation needed
+  const endpoint = linkScript || ADMIN_SHEET_URL;
+  const res = await callGAS('getExamData', { examCode }, endpoint);
+  return res.success ? { config: res.config, questions: res.questions } : null;
 }
 
 export async function submitResult(linkScript: string, result: ExamResult) {
-  console.log("Submitting result:", result);
-  return { success: true };
+  const endpoint = linkScript || ADMIN_SHEET_URL;
+  return await callGAS('submitResult', { result }, endpoint);
 }
 
 export async function resetResults(linkScript: string, mode: 'all' | 'exam', examCode?: string) {
-  console.log("Resetting results:", { mode, examCode });
-  return { success: true };
+  const endpoint = linkScript || ADMIN_SHEET_URL;
+  return await callGAS('resetResults', { mode, examCode }, endpoint);
 }
