@@ -1,3 +1,9 @@
+// ====================================Admin ========================================
+const SPREADSHEET_ID_ADMIN = "1y7OmTFZxgdLgGUtoNpo7WTIVwJyeTVE9rzSzWaY_Btc";
+const ssAdmin = SpreadsheetApp.openById(SPREADSHEET_ID_ADMIN);
+// ====================================GV ===========================================
+const SPREADSHEET_ID = "1y7OmTFZxgdLgGUtoNpo7WTIVwJyeTVE9rzSzWaY_Btc";
+const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
 /**
  * GOOGLE APPS SCRIPT FOR ONLINE EXAM SYSTEM
@@ -42,13 +48,13 @@ function doPost(e) {
 }
 
 function verifyTeacher(idgv) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Teachers');
+  var sheet = ssAdmin.getSheetByName('idgv');
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] == idgv) {
       return { 
         success: true, 
-        data: { idNumber: data[i][0], name: data[i][1], subject: data[i][2], linkScript: data[i][3] } 
+        data: { idNumber: data[i][0], name: data[i][1], subject: data[i][3], linkScript: data[i][2] } 
       };
     }
   }
@@ -56,10 +62,10 @@ function verifyTeacher(idgv) {
 }
 
 function verifyStudent(idgv, sbd) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Students');
+  var sheet = ss.getSheetByName('danhsach');
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
-    if (data[i][0] == sbd && data[i][3] == idgv) {
+    if (data[i][0] == sbd && data[i][5] == idgv) {
       return { 
         success: true, 
         data: { sbd: data[i][0], name: data[i][1], class: data[i][2], idgv: data[i][3] } 
@@ -70,8 +76,7 @@ function verifyStudent(idgv, sbd) {
 }
 
 function saveExam(config, questions) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var examSheet = ss.getSheetByName('Exams');
+  var examSheet = ss.getSheetByName('exams');
   
   // Lưu hoặc cập nhật Config
   var configFound = false;
@@ -93,7 +98,7 @@ function saveExam(config, questions) {
 }
 
 function getExamData(examCode) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Exams');
+  var sheet = ss.getSheetByName('exams');
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] == examCode) {
@@ -108,7 +113,7 @@ function getExamData(examCode) {
 }
 
 function submitResult(res) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Results');
+  var sheet = ss.getSheetByName('ketqua');
   sheet.appendRow([
     res.timestamp, 
     res.exams, 
@@ -123,7 +128,7 @@ function submitResult(res) {
 }
 
 function resetResults(mode, examCode) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Results');
+  var sheet = ss.getSheetByName('ketqua');
   if (mode === 'all') {
     var lastRow = sheet.getLastRow();
     if (lastRow > 1) {
