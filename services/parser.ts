@@ -35,7 +35,7 @@ export async function parseExamFile(file: File, examCode: string): Promise<Quest
     if (/Phần III/i.test(text)) { currentType = QuestionType.SA; return; }
 
     // Detect new question "Câu X."
-    const questionMatch = text.match(/^Câu\s+(\d+)\./i);
+    const questionMatch = text.match(/^Câu\s+(\d+)\s*[:.]/i);
     if (questionMatch) {
       if (currentQuestion && currentQuestion.idquestion) {
         questions.push(currentQuestion as Question);
@@ -55,6 +55,9 @@ export async function parseExamFile(file: File, examCode: string): Promise<Quest
       // If it's an MCQ and the question body itself contains the underlined answer
       // (Though the prompt says "Gạch chân đáp án đúng, xuống dòng các phương án")
     }
+    else if (!mcqMatch && !tfMatch && currentQuestion && !questionMatch) {
+  currentQuestion.question += '<br/>' + innerHtml;
+}
 
     if (!currentQuestion) return;
 
@@ -78,7 +81,10 @@ export async function parseExamFile(file: File, examCode: string): Promise<Quest
         const label = tfMatch[1].toLowerCase();
         const content = tfMatch[2];
         currentQuestion.options?.push(`${label}) ${content}`);
-        if (innerHtml.includes('<u>')) {
+       if (
+  innerHtml.includes('<u>') ||
+  innerHtml.includes('text-decoration:underline')
+) {
           (currentQuestion.correctAnswer as string[]).push(label);
         }
       }
@@ -86,7 +92,7 @@ export async function parseExamFile(file: File, examCode: string): Promise<Quest
 
     // SA Parsing: <Key=X>
     if (currentType === QuestionType.SA) {
-      const saMatch = text.match(/<Key=(.*)>/i);
+      const saMatch = text.match(/<\s*Key\s*=\s*([^>]+)\s*>/i);
       if (saMatch) {
         currentQuestion.correctAnswer = saMatch[1].trim();
       }
