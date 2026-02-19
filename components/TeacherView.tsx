@@ -10,7 +10,7 @@ interface Props {
   user: User;
 }
 
-const TeacherView: React.FC<Props> = ({ user }) => {
+const TeacherView: React.FC<Props> = ({ user }) => {  
   const [examCode, setExamCode] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [config, setConfig] = useState<ExamConfig>({
@@ -98,6 +98,7 @@ const TeacherView: React.FC<Props> = ({ user }) => {
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               placeholder="Ví dụ: TOAN12A"
             />
+           
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Chọn file Word (.docx)</label>
