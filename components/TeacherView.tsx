@@ -112,7 +112,7 @@ const TeacherView: React.FC<Props> = ({ user }) => {
         </div>
 
         {status && <div className="text-green-600 font-medium mb-4">{status}</div>}
-        {*/ Nút cấu hình đề */}
+         {/* Cấu hình đề */}
 
         {questions.length > 0 && (
           <div className="space-y-6">
@@ -200,6 +200,7 @@ const TeacherView: React.FC<Props> = ({ user }) => {
               <div className="mt-2 text-sm text-green-700 font-bold">
                 Đáp án: {Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer}
               </div>
+                {/* Xem lời giải */}
               {q.explanation && (
                 <div className="mt-2 text-sm text-gray-500 italic">
                   Lời giải: <MathRenderer content={q.explanation} />
