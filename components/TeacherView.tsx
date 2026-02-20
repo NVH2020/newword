@@ -112,6 +112,7 @@ const TeacherView: React.FC<Props> = ({ user }) => {
         </div>
 
         {status && <div className="text-green-600 font-medium mb-4">{status}</div>}
+        {*/ Nút cấu hình đề */}
 
         {questions.length > 0 && (
           <div className="space-y-6">
@@ -123,7 +124,7 @@ const TeacherView: React.FC<Props> = ({ user }) => {
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-green-700">Phần II (TF): {config.tfCount} câu</p>
-                <label className="text-xs">Điểm mỗi ý:</label>
+                <label className="text-xs">Điểm mỗi câu:</label>
                 <input type="number" step="0.1" value={config.tfScorePerPart} onChange={e => setConfig({...config, tfScorePerPart: parseFloat(e.target.value)})} className="w-full p-1 border rounded" />
               </div>
               <div className="space-y-2">
